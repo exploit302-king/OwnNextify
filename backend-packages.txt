@@ -1,0 +1,6 @@
+1st Command: npm init -y
+2nd Command: npm i express mongoose dotenv cors morgan jsonwebtoken bcryptjs aws-sdk nodemailer nanoid slugify geolocation
+3rd Command ({optional} =>if error in vulnerabilities) : npm audit fix --force
+
+
+step-1: (Go to the server's package.json file and type there) => {"type":"modules",} {this is due to, we import the express with the mathod of react}

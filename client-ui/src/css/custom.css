@@ -1,0 +1,30 @@
+.myCard{
+  width: 290px;
+  height: 270px;
+}
+.myImage{
+  width: 600px;
+  height: 600px;
+  backgroung:transparent;
+}
+
+/* Ensure the layout takes up the full screen height */
+body, html {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* App layout wrapper */
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Main content should grow to fill the space between header and footer */
+main {
+  flex-grow: 1;
+}

@@ -1,0 +1,1 @@
+npm i react-icons react-helmet react-toastify antd react-router-dom react-image-gallery axios react-redux @reduxjs/toolkit doten
