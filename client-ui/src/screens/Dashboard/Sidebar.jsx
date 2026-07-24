@@ -34,7 +34,7 @@ const Sidebar = () => {
   return (
     <div className="shadow-2xl flex  ">
       <div
-        className={`bg-gray-200 dark:bg-gray-950 dark:text-white text-black space-y-6 py-7 px-2 left-0 h-screen transition-all duration-300 ${isSidebarOpen ? "w-64" : "w-10"
+        className={`bg-gray-200 dark:bg-gray-950 dark:text-white text-black space-y-6 py-7 px-2 left-0 min-h-screen transition-all duration-300 ${isSidebarOpen ? "w-64" : "w-10"
           }`}
       >
         {/* Header */}
@@ -68,10 +68,8 @@ const Sidebar = () => {
                 title: "Products",
                 icon: <MdProductionQuantityLimits />,
                 links: [
-                  "cartPage",
-                  "updateprofile",
-                  "upload-image",
-                  "change-password",
+                  "allproducts",
+                  "addproducts",
                 ],
               },
               {

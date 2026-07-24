@@ -9,6 +9,9 @@ import Signup from './screens/Signup';
 import Login from './screens/Login';
 import Navbar from './components/Header';
 import AddProducts from './screens/Dashboard/AddProducts';
+import AllProducts from './screens/Dashboard/AllProducts';
+import ViewProduct from "./screens/Dashboard/ViewProduct";
+import EditProduct from "./screens/Dashboard/EditProducts";
 import SingleProduct from './screens/SingleProduct';
 import Footer from './components/Footer';
 import Dashboard from './screens/Dashboard/Dashboard'
@@ -45,7 +48,6 @@ const App = () => {
              <Route path="/search" element={<Search />} />
              <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
-            <Route path='/addproducts' element={<AddProducts />} />
             <Route path='/product/:id' element={<SingleProduct />} />
             <Route path='/auth/forgetpassword' element={<ForgetPassword />} />
             <Route path="/auth/verify/:token" element={<ActivateAccount />} />
@@ -59,22 +61,25 @@ const App = () => {
 
             <Route path='summary' element={<OrderSummary />} />
 
-            {/* <Route element={<PrivateRoute />}> */}
+            <Route element={<PrivateRoute />}>
               {/* dashboard items start  */}
               <Route path='/dashboard' element={<Dashboard />} >
 
                 {/* <Route path='sidebar' element={<Sidebar />} /> */}
                 <Route path='profile' element={<Profile />} />
                 <Route path='updateprofile' element={<UpdateProfile />} />
-                <Route path='changepassword' element={<ChangePassword />} />
                 <Route path='upload-image' element={<UploadImage />} />
-
+                <Route path='changepassword' element={<ChangePassword />} />
+                <Route path='addproducts' element={<AddProducts />} />
+                <Route path='allproducts' element={<AllProducts />} />
+                <Route path="viewproduct/:id" element={<ViewProduct />} />
+                <Route path="edit-product/:id" element={<EditProduct />} />
 
 
               </Route>
               {/* dashboard items end */}
 
-            {/* </Route> */}
+            </Route>
 
 
           </Routes>
@@ -85,5 +90,4 @@ const App = () => {
 
   )
 }
-
 export default App
