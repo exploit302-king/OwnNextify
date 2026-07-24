@@ -1,5 +1,5 @@
 import express from 'express';
-
+import { upload } from "../config/config.js";
 const authRoute = express.Router();
 
 // import the controllers 
@@ -19,7 +19,7 @@ authRoute.route("/username").get(requiredLoggedIn, auth.profile)
 authRoute.route("/reset-password").post(requiredLoggedIn, auth.resetPassword)
 authRoute.route("/changepassword").post(auth.changepassword)
 authRoute.route("/update-profile").put(requiredLoggedIn, auth.updateProfile)
-authRoute.route("/upload-image").put(requiredLoggedIn, auth.uploadProfileImage)
+authRoute.route("/upload-image").put(requiredLoggedIn, upload.single("profileImage"), auth.uploadProfileImage)
 authRoute.route("/delete-image").put(requiredLoggedIn, auth.deleteProfileImage)
 
 

@@ -27,10 +27,14 @@ const userSchema = new mongoose.Schema({
     default: "buyer",
     enum: ["seller", "buyer", "admin"]
   },
-  profilePic:{},
-  isAdmin: {
-    type: Boolean,
-    default: false
+  // profilePic:{},
+  // isAdmin: {
+  //   type: Boolean,
+  //   default: false
+  // },
+  profileImage: {
+    type: String,
+    default: "",
   },
   isVerified: {
     type: Boolean,
@@ -44,21 +48,21 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "dummy address"
   },
-  age:{
-    type:Number,
+  age: {
+    type: Number,
     default: 21
   },
   phone: {
     type: String,
     default: "XXX-XXXXXXXX"
   },
-  company:{
+  company: {
     type: String,
     default: "dummy company"
   },
 
-  resetPasswordCode:{ }
-  
+  resetPasswordCode: {}
+
 }, { timestamps: true });
 
 const schemaUser = model("user", userSchema);

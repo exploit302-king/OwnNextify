@@ -18,11 +18,38 @@ const UpdateProfile = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+
     e.preventDefault();
-    console.log('Updated Profile Data:', formData);
-    setAuth((prev) => ({ ...prev, user: { ...prev.user, ...formData } }));
-    alert('Profile updated successfully!');
+    try {
+      const response = await fetch(
+        "http://localhost:8080/api/v1/users/update-profile",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${auth.token}`,
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+      console.log("2");
+      console.log(response);
+
+      const data = await response.json();
+      const updatedAuth = {
+        ...auth,
+        user: data.user,
+      };
+
+      setAuth(updatedAuth);
+      localStorage.setItem("auth", JSON.stringify(updatedAuth));
+
+      alert("Profile updated successfully!");
+
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

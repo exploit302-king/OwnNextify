@@ -4,6 +4,7 @@ import { nanoid } from "nanoid";
 import * as config from "../config/config.js"
 import sendMail from "../helpers/sendMail.js";
 import jwt from "jsonwebtoken";
+import { uploadToS3 } from "../config/config.js";
 import sendTokenAndUserResponse from "../helpers/sendTokenAndUser.js"
 import validator from "email-validator"
 import multer from "multer";
@@ -283,56 +284,56 @@ export const accessAccount = async (req, res) => {
 // Reset Password 
 export const resetPassword = async (req, res) => {
   try {
-      // Destructure new password and reset token (resetCode) from the request body
-      const { resetCode, newPassword } = req.body;
+    // Destructure new password and reset token (resetCode) from the request body
+    const { resetCode, newPassword } = req.body;
 
-      // Validate the new password
-      if (!newPassword || newPassword.length < 6) {
-          return res.json({ error: "Password must be at least 6 characters long" });
-      }
+    // Validate the new password
+    if (!newPassword || newPassword.length < 6) {
+      return res.json({ error: "Password must be at least 6 characters long" });
+    }
 
-      // Check if resetCode is provided
-      if (!resetCode) {
-          return res.json({ error: "Reset code must be provided" });
-      }
+    // Check if resetCode is provided
+    if (!resetCode) {
+      return res.json({ error: "Reset code must be provided" });
+    }
 
-      // Verify the reset token and extract the resetPasswordCode
-      let decoded;
-      try {
-          decoded = jwt.verify(resetCode, config.JWT_SECRET); // Verify the JWT token
-      } catch (err) {
-          return res.json({ error: "Invalid or expired reset code" }); // Handle invalid or expired token
-      }
+    // Verify the reset token and extract the resetPasswordCode
+    let decoded;
+    try {
+      decoded = jwt.verify(resetCode, config.JWT_SECRET); // Verify the JWT token
+    } catch (err) {
+      return res.json({ error: "Invalid or expired reset code" }); // Handle invalid or expired token
+    }
 
-      // Extract resetPasswordCode from the decoded token
-      const { resetPasswordCode } = decoded;
+    // Extract resetPasswordCode from the decoded token
+    const { resetPasswordCode } = decoded;
 
-      // Find the user by resetPasswordCode
-      const user = await schemaUserUser.findOne({ resetPasswordCode });
-      if (!user) {
-          return res.json({ error: "Invalid reset code or token expired" });
-      }
+    // Find the user by resetPasswordCode
+    const user = await schemaUserUser.findOne({ resetPasswordCode });
+    if (!user) {
+      return res.json({ error: "Invalid reset code or token expired" });
+    }
 
-      // Hash the new password
-      const hashedPassword = await bcrypt.hash(newPassword, 12);
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
 
-      // Update the user's password and clear the reset passcode
-      user.password = hashedPassword;
-      user.resetPasswordCode = ''; // Remove the reset passcode after successful password update
-      await user.save(); // Save the user with the new password
+    // Update the user's password and clear the reset passcode
+    user.password = hashedPassword;
+    user.resetPasswordCode = ''; // Remove the reset passcode after successful password update
+    await user.save(); // Save the user with the new password
 
-      // Send success response with a message
-      res.json({
-          message: "Password updated successfully. You can now login with your new password.",
-      });
+    // Send success response with a message
+    res.json({
+      message: "Password updated successfully. You can now login with your new password.",
+    });
 
   } catch (error) {
-      console.error("Server error during resetPassword:", error);
-      res.status(500).json({
-          ok: false,
-          message: "Server Error",
-          error: error.message,
-      });
+    console.error("Server error during resetPassword:", error);
+    res.status(500).json({
+      ok: false,
+      message: "Server Error",
+      error: error.message,
+    });
   }
 };
 
@@ -342,131 +343,158 @@ export const resetPassword = async (req, res) => {
 
 // Protected apis -----> secured by email and password
 
-    // Fetch logged user ------> GET
-    export const fetchLoggedUser = async (req, res) => {
-      try {
-        // const { email } = req.user;
-        const user = await schemaUser.findById(req.user.id);
-        if (!user) {
-          return res.json({
-            ok: false,
-            error: "You are not loggedIn"
-          });
-        }
-        sendTokenAndUserResponse(req, res, user);
-        
-      } catch (error) {
-        res.json({
-          ok: false,
-          error: error.message
-        });
-      }
+// Fetch logged user ------> GET
+export const fetchLoggedUser = async (req, res) => {
+  try {
+    // const { email } = req.user;
+    const user = await schemaUser.findById(req.user.id);
+    if (!user) {
+      return res.json({
+        ok: false,
+        error: "You are not loggedIn"
+      });
     }
+    sendTokenAndUserResponse(req, res, user);
 
-    // Fetch user profile bu username -----> GET //
-    export const profile = async () => {
-      try {
+  } catch (error) {
+    res.json({
+      ok: false,
+      error: error.message
+    });
+  }
+}
 
-      } catch (error) {
-        res.json({
-          ok: false,
-          error: error.message
-        })
-      }
-    }
+// Fetch user profile bu username -----> GET //
+export const profile = async () => {
+  try {
 
-    // Update user Profile ------> PUT //
-    export const updateProfile = async () => {
-      try {
+  } catch (error) {
+    res.json({
+      ok: false,
+      error: error.message
+    })
+  }
+}
 
-      } catch (error) {
-        res.json({
-          ok: false,
-          error: error.message
-        })
-      }
-    }
+// Update user Profile ------> PUT //
+export const updateProfile = async (req, res) => {
+  try {
+    const { name, age, phone, email, address, company } = req.body;
+
+    const updatedUser = await schemaUser.findByIdAndUpdate(
+      req.user.id,
+      {
+        name,
+        age,
+        phone,
+        email,
+        address,
+        company,
+      },
+      { new: true }
+    );
+
+    res.json({
+      success: true,
+      message: "Profile updated successfully",
+      user: updatedUser,
+    });
+
+  } catch (error) {
+    res.json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
 
 // Change Password
 export const changepassword = async (req, res) => {
-    
-    try {
-        const {email, oldPassword, newPassword } = req.body;
-         // Check if both old and new passwords are provided
-        if (!oldPassword ) {
-            return res.json({ message: ' Please enter your old password' });
-        }
-        if(!newPassword){
-            return res.json({ message: ' Please enter your new password ' });
-        }
-        
-        //email
-        const user = await schemaUser.findOne({ email });
 
-        if (!user) {
-            return res.json({ message: 'User not found' });
-        }
-
-        // Check if old password matches the current password in the database
-        const isOldPasswordCorrect = await bcrypt.compare(oldPassword, user.password);
-        if (!isOldPasswordCorrect) {
-            return res.json({ message: 'Old password is incorrect' });
-        }
-
-        // Hash the new password
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-        // Update the password in the database
-        user.password = hashedPassword;
-        await user.save();
-
-        return res.json({
-            newPassword,
-             message: 'Password successfully changed'
-             });
-    } catch (err) {
-        console.error(err);
-        return res.json({ 
-            message: 'Server error. Could not change password' + err.message,
-            error: err.message
-         });
+  try {
+    const { email, oldPassword, newPassword } = req.body;
+    // Check if both old and new passwords are provided
+    if (!oldPassword) {
+      return res.json({ message: ' Please enter your old password' });
     }
+    if (!newPassword) {
+      return res.json({ message: ' Please enter your new password ' });
+    }
+
+    //email
+    const user = await schemaUser.findOne({ email });
+
+    if (!user) {
+      return res.json({ message: 'User not found' });
+    }
+
+    // Check if old password matches the current password in the database
+    const isOldPasswordCorrect = await bcrypt.compare(oldPassword, user.password);
+    if (!isOldPasswordCorrect) {
+      return res.json({ message: 'Old password is incorrect' });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the password in the database
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.json({
+      newPassword,
+      message: 'Password successfully changed'
+    });
+  } catch (err) {
+    console.error(err);
+    return res.json({
+      message: 'Server error. Could not change password' + err.message,
+      error: err.message
+    });
+  }
 };
 
-    // Upload Profile Image AWS S3 Simple Storage System: Bucket PUT
-    export const uploadProfileImage = async (req, res) => {
-      try {
-  
-          if (!req.file) {
-              return res.json({ message: 'No file uploaded' });
-          }
-          const imageUrl = await uploadToS3(req.file);
-          res.json({
-              success: 'Profile image uploaded successfully!',
-              imageUrl, 
-          });
-  
-      } catch (error) {
-          console.error(error);
-          res.json({
-              message: 'Error uploading profile image',
-              error: error.message,
-          });
-      }
-  };
+// Upload Profile Image AWS S3 Simple Storage System: Bucket PUT
+export const uploadProfileImage = async (req, res) => {
+  try {
 
-    // Delete User DELETE Profile Image
-
-    export const deleteProfileImage = async () => {
-      try {
-
-      } catch (error) {
-        res.json({
-          ok: false,
-          error: error.message
-        })
-      }
+    if (!req.file) {
+      return res.json({ message: 'No file uploaded' });
     }
+    const imageUrl = await uploadToS3(req.file);
+    // Save image URL in MongoDB
+    const updatedUser = await schemaUser.findByIdAndUpdate(
+      req.user.id,
+      { profileImage: imageUrl },
+      { new: true }
+    );
+    res.json({
+      success: 'Profile image uploaded successfully!',
+      imageUrl,
+      user: updatedUser,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.json({
+      message: 'Error uploading profile image',
+      error: error.message,
+    });
+  }
+};
+
+// Delete User DELETE Profile Image
+
+export const deleteProfileImage = async () => {
+  try {
+
+  } catch (error) {
+    res.json({
+      ok: false,
+      error: error.message
+    })
+  }
+}
 
 
 

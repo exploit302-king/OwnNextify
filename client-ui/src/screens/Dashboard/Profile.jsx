@@ -5,7 +5,7 @@ import { useAuth } from '../../context/auth';
 
 const Profile = () => {
   const [auth] = useAuth();
-
+  
   return (
     <div className="flex flex-col md:flex-row max-w-full min-h-screen mx-auto p-6 shadow-lg rounded-lg">
       <div className="w-full md:w-1/2 p-4">

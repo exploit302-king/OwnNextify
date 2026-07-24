@@ -10,7 +10,7 @@ const SES_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID ;
 const SES_SECRET_ACCESS_KEY_ID = process.env.AWS_SECRET_ACCESS_KEY;
 const SES_REGION = 'eu-north-1';
 const SES_VERSION = "2010-12-01";
-export const SES_SENDER_EMAIL = '"Nextify.com Admin" <modud111fareed@gmail.com>';
+export const SES_SENDER_EMAIL = '"Exploit King" <modudmasood111@gmail.com>';
 export const CLIENT_URL = 'http://localhost:5173';
 // const SES_RECIEVER_EMAIL = "modudmasood143@gmail.com"
 
@@ -25,7 +25,7 @@ export const PORT = 8080;
 
 
 
-const S3_BUCKET_NAME = "nextify.com"; // Replace with your bucket name
+const S3_BUCKET_NAME = "modud-assets"; // Replace with your bucket name
 const S3_REGION = "eu-north-1"; // Replace with your bucket's region
 export const S3_CONFIG = {
   accessKeyId: SES_ACCESS_KEY_ID, // Same access key
@@ -60,7 +60,7 @@ export const uploadToS3 = async (file) => {
       Key: `${Date.now()}-${file.originalname}`, // Fixed template literal syntax
       Body: file.buffer, // File content
       ContentType: file.mimetype, // File MIME type
-      ACL: 'public-read',  // Ensure image is publicly accessible
+      // ACL: 'public-read',  // Ensure image is publicly accessible
     };
 
     // Upload image to S3
@@ -71,6 +71,6 @@ export const uploadToS3 = async (file) => {
   }
 };
 
-// MONGODB_ATLAS
-export const MONGODB_CLOUD = "mongodb://localhost:27017/Fareed";
-export const JWT_SECRET = "454GFDDFG54REFSDGDBHFG";
+// MONGODB_Compass
+export const MONGODB_CLOUD = process.env.MONGODB_URI;
+export const JWT_SECRET = process.env.JWT_SECRET;

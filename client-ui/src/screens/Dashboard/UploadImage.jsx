@@ -9,12 +9,7 @@ const UploadImage = () => {
 
   // Load image from localStorage or from auth context
   useEffect(() => {
-    const savedImage = localStorage.getItem('profileImage');
-    if (savedImage) {
-      setPreview(savedImage);
-    } else {
-      setPreview(auth?.user?.profileImage || 'https://via.placeholder.com/150');
-    }
+    setPreview(auth?.user?.profileImage || 'https://via.placeholder.com/150');
   }, [auth]);
 
   const handleImageChange = (e) => {
@@ -23,7 +18,7 @@ const UploadImage = () => {
       const imageURL = URL.createObjectURL(file);
       setSelectedImage(file);
       setPreview(imageURL);
-      localStorage.setItem('profileImage', imageURL); // Save image URL in localStorage
+      // localStorage.setItem('profileImage', imageURL); // Save image URL in localStorage
     }
   };
 
@@ -35,21 +30,35 @@ const UploadImage = () => {
 
       try {
         // Make API call to upload image
-        const response = await fetch('http://localhost:8080/api/v1/uploadProfileImage', {  // Change the URL to match your backend
-          method: 'POST',
-          body: formData,
-        });
+        const response = await fetch(
+          "http://localhost:8080/api/v1/users/upload-image",
+          {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${auth.token}`,
+            },
+            body: formData,
+          });
 
         if (response.ok) {
           const data = await response.json();
+          console.log(data);
           const { imageUrl } = data; // Assuming the API returns the image URL
 
           // Update the user's profile image in auth context
-          setAuth((prev) => ({
-            ...prev,
-            user: { ...prev.user, profileImage: imageUrl },
-          }));
+          const updatedAuth = {
+            ...auth,
+            user: {
+              ...auth.user,
+              profileImage: imageUrl,
+            },
+          };
 
+          setAuth(updatedAuth);
+
+          localStorage.setItem("auth", JSON.stringify(updatedAuth));
+
+          setPreview(imageUrl);
           alert('Profile image uploaded successfully!');
         } else {
           const errorData = await response.json();
