@@ -22,4 +22,7 @@ prodRoute.put("/:id", upload.single("image"), prod.updateProduct);
 // Get Single Product
 prodRoute.get("/:id", prod.fetchProduct);
 
+// Delete Product
+prodRoute.delete("/:id", prod.deleteProduct);
+
 export default prodRoute;

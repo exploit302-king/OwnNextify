@@ -12,6 +12,9 @@ import AddProducts from './screens/Dashboard/AddProducts';
 import AllProducts from './screens/Dashboard/AllProducts';
 import ViewProduct from "./screens/Dashboard/ViewProduct";
 import EditProduct from "./screens/Dashboard/EditProducts";
+import AllUsers from "./screens/Dashboard/AllUsers"; // ------->
+import ViewUser from "./screens/Dashboard/ViewUser"; // ------->
+import EditUser from "./screens/Dashboard/EditUser"; // ------->
 import SingleProduct from './screens/SingleProduct';
 import Footer from './components/Footer';
 import Dashboard from './screens/Dashboard/Dashboard'
@@ -45,8 +48,8 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/signup" element={<Signup />} />
-             <Route path="/search" element={<Search />} />
-             <Route path="/contact" element={<Contact />} />
+            <Route path="/search" element={<Search />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
             <Route path='/product/:id' element={<SingleProduct />} />
             <Route path='/auth/forgetpassword' element={<ForgetPassword />} />
@@ -74,6 +77,9 @@ const App = () => {
                 <Route path='allproducts' element={<AllProducts />} />
                 <Route path="viewproduct/:id" element={<ViewProduct />} />
                 <Route path="edit-product/:id" element={<EditProduct />} />
+                <Route path='allusers' element={<AllUsers />} />
+                <Route path="edituser/:id" element={<EditUser />} />
+                <Route path="viewuser/:id" element={<ViewUser />} />
 
 
               </Route>

@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import user from '../images/No_user.jpg';
+import axios from "axios";
+import apis from "../config/apis";
 import { FaShoppingCart } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { FiHeart } from "react-icons/fi";
@@ -15,13 +17,62 @@ import { useAuth } from '../context/auth';
 import { useSelector, useDispatch } from 'react-redux';
 
 const Navbar = () => {
+  const [search, setSearch] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [loadingSearch, setLoadingSearch] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const toggleFavorite = () => setIsFavorite(!isFavorite);
-
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [auth, setAuth] = useAuth();
   // console.log(auth.user);
   const navigate = useNavigate();
+  const fetchSuggestions = async (value) => {
+
+    setSearch(value);
+
+    if (!value.trim()) {
+
+      setSuggestions([]);
+
+      setShowSuggestions(false);
+
+      return;
+
+    }
+
+    try {
+
+      setLoadingSearch(true);
+
+      const { data } = await axios.get(
+        `${apis[1]}/search?keyword=${value}`
+      );
+
+      if (data.ok) {
+
+        setSuggestions(data.products.slice(0, 5));
+
+        setShowSuggestions(true);
+
+      }
+
+    } catch (error) {
+
+      console.log(error);
+
+    } finally {
+
+      setLoadingSearch(false);
+
+    }
+
+  };
+
+  const handleSearch = () => {
+    if (!search.trim()) return;
+    navigate(`/search?keyword=${search}`);
+  };
   const dispatch = useDispatch();
   const { cartItems } = useSelector((state) => state.cartSlice);
   const { wishItems } = useSelector((state) => state.WishSlice);
@@ -42,26 +93,43 @@ const Navbar = () => {
   const dropdownRef = useRef(null);
   const cartDropdownRef = useRef(null);
   const favDropdownRef = useRef(null);
+  const searchRef = useRef(null);
 
   const handleClickOutside = (e) => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(e.target) &&
-      cartDropdownRef.current &&
-      !cartDropdownRef.current.contains(e.target) &&
-      favDropdownRef.current &&
-      !favDropdownRef.current.contains(e.target)
-    ) {
+
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
       setIsDropdownOpen(false);
+    }
+
+    if (cartDropdownRef.current && !cartDropdownRef.current.contains(e.target)) {
       setCartDropdownOpen(false);
+    }
+
+    if (favDropdownRef.current && !favDropdownRef.current.contains(e.target)) {
       setFavDropdownOpen(false);
     }
+
+    if (searchRef.current && !searchRef.current.contains(e.target)) {
+      setShowSuggestions(false);
+    }
+
   };
 
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === "Escape") {
+        setShowSuggestions(false);
+      }
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => {
+      window.removeEventListener("keydown", handleEsc);
     };
   }, []);
 
@@ -101,13 +169,70 @@ const Navbar = () => {
 
             {/* SearchBar */}
             <div className="sm:flex items-center space-x-4">
-              <div className="relative">
-                <input type="text" className="bg-[silver] border text-black text-sm rounded-full pl-2 pr-4 py-1 focus:outline-none focus:ring-2" placeholder="Search..." />
-                <button className="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-500">
+
+              <div className="relative w-72" ref={searchRef}>
+                <input type="text" placeholder="Search Products..." value={search} onChange={(e) => fetchSuggestions(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                  className="bg-[silver] border text-black text-sm rounded-full pl-3 pr-10 py-2 focus:outline-none focus:ring-2 w-72"
+                />
+                <button
+                  onClick={handleSearch}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-blue-600"
+                >
                   <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M16.32 14.9l5.39 5.4a1 1 0 0 1-1.42 1.4l-5.38-5.38a8 8 0 1 1 1.41-1.41zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z" />
                   </svg>
                 </button>
+                {showSuggestions && (
+                  <div className="absolute top-14 left-0 w-full bg-white dark:bg-gray-900 rounded-xl shadow-2xl border dark:border-gray-700 z-50 overflow-hidden">
+                    {loadingSearch ? (
+                      <div className="p-4 text-center text-gray-500">
+                        Searching...
+                      </div>
+                    ) : suggestions.length > 0 ? (
+                      <>
+                        {suggestions.map((product) => (
+                          <Link
+                            key={product._id}
+                            to={`/product/${product._id}`}
+                            onClick={() => {
+                              setShowSuggestions(false);
+                              setSearch("");
+                            }}
+                            className="flex items-center gap-3 p-3 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+                          >
+                            <img
+                              src={product.image?.[0]}
+                              alt={product.title}
+                              className="w-14 h-14 rounded-lg object-cover border"
+                            />
+                            <div className="flex-1">
+                              <h3 className="font-semibold text-sm dark:text-white">
+                                {product.title}
+                              </h3>
+                              <p className="text-xs text-gray-500">
+                                {product.category}
+                              </p>
+                              <p className="text-green-600 font-bold">
+                                Rs. {product.price}
+                              </p>
+                            </div>
+                          </Link>
+                        ))}
+                        <button
+                          onClick={handleSearch}
+                          className="w-full py-3 bg-gray-100 dark:bg-gray-800 hover:bg-green-600 hover:text-white font-semibold transition"
+                        >
+                          See all results →
+                        </button>
+                      </>
+                    ) : (
+                      <div className="p-5 text-center text-gray-500">
+                        No Product Found
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -224,7 +349,7 @@ const Navbar = () => {
               <Menu as="div" className="relative">
                 <Menu.Button className="flex items-center focus:outline-none">
                   <img className="h-12 w-12 rounded-full border-2 border-gray-400 object-cover" src={auth?.user?.profileImage || user} alt="User" />
-                </Menu.Button> 
+                </Menu.Button>
                 {auth?.user ? (
                   <Menu.Items className="absolute right-0 w-72 bg-gray-200 shadow-lg rounded-lg mt-2 z-10">
                     <div className="flex items-center">

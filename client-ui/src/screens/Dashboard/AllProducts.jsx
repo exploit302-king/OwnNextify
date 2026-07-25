@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { successToast, errorToast } from "../../functions/messages";
 import apis from "../../config/apis";
 import { Link } from "react-router-dom";
 
@@ -8,6 +9,8 @@ const AllProducts = () => {
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState(null);
 
     // ===============================
     // Fetch Products
@@ -29,24 +32,81 @@ const AllProducts = () => {
         }
     };
 
+    const searchProducts = async (keyword) => {
+        try {
+            if (keyword.trim() === "") {
+                setFilteredProducts(products);
+                return;
+            }
+            const { data } = await axios.get(
+                `${apis[1]}/search?keyword=${keyword}`
+            );
+            if (data.ok) {
+                setFilteredProducts(data.products);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const openDeleteModal = (product) => {
+        setSelectedProduct(product);
+        setShowDeleteModal(true);
+    };
+
+    const closeDeleteModal = () => {
+        setSelectedProduct(null);
+        setShowDeleteModal(false);
+    };
+
+    const deleteProduct = async () => {
+
+        if (!selectedProduct) return;
+
+        try {
+
+            const { data } = await axios.delete(
+                `${apis[1]}/${selectedProduct._id}`
+            );
+
+            if (data.ok) {
+
+                successToast(data.message);
+
+                fetchProducts();
+
+                closeDeleteModal();
+
+            } else {
+
+                errorToast(data.message);
+
+            }
+
+        } catch (error) {
+
+            errorToast(error.message);
+
+        }
+
+    };
+
     useEffect(() => {
         fetchProducts();
     }, []);
 
-    // ===============================
-    // Search Products
-    // ===============================
+    
     useEffect(() => {
-        if (search === "") {
+        if (search.trim() === "") {
             setFilteredProducts(products);
         } else {
+            const keyword = search.toLowerCase().trim();
             const result = products.filter((item) =>
-                item.title.toLowerCase().includes(search.toLowerCase()) ||
-                item.subtitle.toLowerCase().includes(search.toLowerCase()) ||
-                item.brand.toLowerCase().includes(search.toLowerCase()) ||
-                item.category.toLowerCase().includes(search.toLowerCase())
+                item.title?.toLowerCase().startsWith(keyword) ||
+                item.subtitle?.toLowerCase().startsWith(keyword) ||
+                item.brand?.toLowerCase().startsWith(keyword) ||
+                item.category?.toLowerCase().startsWith(keyword)
             );
-
             setFilteredProducts(result);
         }
     }, [search, products]);
@@ -54,7 +114,7 @@ const AllProducts = () => {
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen">
-                <h1 className="text-3xl font-bold text-green-600">
+                <h1 className="text-3xl font-bold text-gray-950">
                     Loading Products...
                 </h1>
             </div>
@@ -62,43 +122,74 @@ const AllProducts = () => {
     }
 
     return (
-        <div className="w-full min-h-screen bg-gray-100 p-6">
+        <div className="w-full min-h-screen dark:text-white dark:bg-gray-700 p-6">
 
             {/* Heading */}
 
             <div className="flex justify-between items-center mb-6">
 
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-800">
+                    <h1 className="text-3xl font-bold dark:text-white ">
                         All Products
                     </h1>
 
-                    <p className="text-gray-500 mt-1">
-                        Total Products : {filteredProducts.length}
+                    <p className="text-gray-500 dark:text-gray-400 mt-1">
+                        {search
+                            ? `Showing ${filteredProducts.length} result(s) for "${search}"`
+                            : `Total Products : ${filteredProducts.length}`}
                     </p>
 
                 </div>
 
                 <Link
                     to="/dashboard/addproducts"
-                    className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-semibold"
+                    className="bg-gray-900 hover:bg-gray-950 text-white px-5 py-2 rounded-lg font-semibold"
                 >
                     + Add Product
                 </Link>
 
             </div>
 
-            {/* Search */}
-
-            <div className="mb-6">
+            {/*  search Bar */}
+            <div className="relative mb-6">
 
                 <input
                     type="text"
                     placeholder="Search by title, subtitle, brand or category..."
-                    className="w-full border rounded-lg p-3 outline-none focus:ring-2 focus:ring-green-500"
+                    className="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 dark:text-white rounded-xl py-3 pl-12 pr-12 outline-none focus:ring-2 focus:ring-green-500 transition"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                 />
+
+                {/* Search Icon */}
+
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                </svg>
+
+                {/* Clear Button */}
+
+                {search && (
+
+                    <button
+                        onClick={() => setSearch("")}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-red-600 text-xl"
+                    >
+                        ×
+                    </button>
+
+                )}
 
             </div>
 
@@ -106,21 +197,55 @@ const AllProducts = () => {
 
             {filteredProducts.length === 0 ? (
 
-                <div className="bg-white rounded-xl shadow p-10 text-center">
+                <div className="relative mb-6">
 
-                    <h2 className="text-2xl font-bold text-red-500">
-                        No Products Found
-                    </h2>
+                    <input
+                        type="text"
+                        placeholder="Search by title, subtitle, brand or category..."
+                        className="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 dark:text-white rounded-xl py-3 pl-12 pr-12 outline-none focus:ring-2 focus:ring-green-500 transition"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+
+                    {/* Search Icon */}
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z"
+                        />
+                    </svg>
+
+                    {/* Clear Button */}
+
+                    {search && (
+
+                        <button
+                            onClick={() => setSearch("")}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-red-600 text-xl"
+                        >
+                            ×
+                        </button>
+
+                    )}
 
                 </div>
 
             ) : (
 
-                <div className="overflow-x-auto bg-white rounded-xl shadow-lg">
+                <div className="overflow-x-auto dark:bg-gray-950 rounded-xl shadow-lg">
 
                     <table className="min-w-full">
 
-                        <thead className="bg-green-600 text-white">
+                        <thead className="dark:bg-gray-950 dark:text-white">
 
                             <tr>
 
@@ -185,7 +310,7 @@ const AllProducts = () => {
                                         {product.category}
                                     </td>
 
-                                    <td className="px-5 py-4 font-bold text-green-600">
+                                    <td className="px-5 py-4 font-bold text-gray-600">
                                         Rs. {product.price}
                                     </td>
 
@@ -197,7 +322,7 @@ const AllProducts = () => {
 
                                         {product.stock > 0 ? (
 
-                                            <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
+                                            <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
                                                 In Stock
                                             </span>
 
@@ -230,35 +355,74 @@ const AllProducts = () => {
 
                                             <button
                                                 className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-sm font-semibold"
-                                                onClick={() =>
-                                                    alert(
-                                                        "Delete API will be added in next step."
-                                                    )
+                                                onClick={() => openDeleteModal(product)
+
                                                 }
                                             >
                                                 Delete
                                             </button>
-
                                         </div>
-
                                     </td>
-
                                 </tr>
-
                             ))}
-
                         </tbody>
-
                     </table>
+                </div>
+            )}
+            {/* Delete Confirmation Modal */}
+
+            {showDeleteModal && (
+
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50">
+
+                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-[90%] max-w-md p-6">
+
+                        <h2 className="text-2xl font-bold text-red-600 mb-4">
+                            Delete Product
+                        </h2>
+
+                        <p className="text-gray-700 dark:text-gray-300">
+
+                            Are you sure you want to delete
+
+                            <span className="font-bold text-black dark:text-white">
+                                {" "}
+                                {selectedProduct?.title}
+                            </span>
+
+                            ?
+
+                        </p>
+
+                        <p className="text-sm text-gray-500 mt-2">
+                            This action cannot be undone.
+                        </p>
+
+                        <div className="flex justify-end gap-3 mt-8">
+
+                            <button
+                                onClick={closeDeleteModal}
+                                className="px-5 py-2 rounded-lg bg-gray-400 hover:bg-gray-500 text-white"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                onClick={deleteProduct}
+                                className="px-5 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white"
+                            >
+                                Delete
+                            </button>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
             )}
-
         </div>
-
     );
-
 };
 
 export default AllProducts;

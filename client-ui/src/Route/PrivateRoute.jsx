@@ -8,7 +8,8 @@ import NotFoundPage from "../screens/P404";
 const PrivateRoute = () => {
   const [loading, setLoading] = useState(true);
   const [ok, setOk] = useState(false);
-  const [auth] = useAuth();
+
+  const [auth, , loadingAuth] = useAuth();
 
   useEffect(() => {
     if (auth?.token) {
@@ -42,7 +43,8 @@ const PrivateRoute = () => {
     }
   };
 
-  if (loading) {
+  // 👇 Ye yahan hona chahiye
+  if (loadingAuth || loading) {
     return <Loader />;
   }
 

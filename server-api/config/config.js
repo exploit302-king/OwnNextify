@@ -2,6 +2,7 @@ import SES from "aws-sdk/clients/ses.js";
 import S3 from "aws-sdk/clients/s3.js"; // Add S3
 // import { S3 } from "aws-sdk"; // Corrected import for S3
 import multer from "multer";
+import path from "path";
 import dotenv from "dotenv";
 
 dotenv.config( );
@@ -68,6 +69,24 @@ export const uploadToS3 = async (file) => {
     return s3Response.Location; // Return the image URL after successful upload
   } catch (error) {
     throw new Error('S3 upload failed: ' + error.message);
+  }
+};
+
+// Delete S3 upload images 
+export const deleteFromS3 = async (imageUrl) => {
+  try {
+
+    if (!imageUrl) return;
+
+    const imageKey = imageUrl.split("/").pop();
+
+    await S3_BUCKET.deleteObject({
+      Bucket: "modud-assets",
+      Key: imageKey,
+    }).promise();
+
+  } catch (error) {
+    throw new Error("S3 Delete Failed : " + error.message);
   }
 };
 

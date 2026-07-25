@@ -1,4 +1,5 @@
 import schemaProduct from "../models/mproducts.js";
+import { deleteFromS3 } from "../config/config.js";
 import { uploadToS3 } from "../config/config.js";
 // import { uploadToS3 } from "../config/config.js";
 
@@ -201,5 +202,43 @@ export const updateProduct = async (req, res) => {
       ok: false,
       message: error.message,
     });
+  }
+};
+
+// Delete Product
+export const deleteProduct = async (req, res) => {
+  try {
+
+    const { id } = req.params;
+
+    const product = await schemaProduct.findById(id);
+
+    if (!product) {
+      return res.json({
+        ok: false,
+        message: "Product not found",
+      });
+    }
+
+    // Delete image from S3
+    if (product.image && product.image.length > 0) {
+      await deleteFromS3(product.image[0]);
+    }
+
+    // Delete MongoDB product
+    await schemaProduct.findByIdAndDelete(id);
+
+    res.json({
+      ok: true,
+      message: "Product deleted successfully",
+    });
+
+  } catch (error) {
+
+    res.json({
+      ok: false,
+      message: error.message,
+    });
+
   }
 };

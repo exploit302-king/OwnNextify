@@ -86,10 +86,8 @@ const Sidebar = () => {
                 title: "Users",
                 icon: <ImUsers />,
                 links: [
-                  "cartPage",
-                  "updateprofile",
-                  "uploadimage",
-                  "change password",
+                  "allusers",
+                  // "change password",
                 ],
               },
             ].map((item, index) => (

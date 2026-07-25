@@ -33,9 +33,6 @@ const UpdateProfile = () => {
           body: JSON.stringify(formData),
         }
       );
-      console.log("2");
-      console.log(response);
-
       const data = await response.json();
       const updatedAuth = {
         ...auth,

@@ -30,4 +30,3 @@ export const fetchProduct = (id) => async (dispatch) => {
   }
 
 }
-

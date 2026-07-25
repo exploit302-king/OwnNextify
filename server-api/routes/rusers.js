@@ -15,6 +15,9 @@ authRoute.route("/access-account").post(auth.accessAccount)
 
 // protected Routes
 authRoute.route("/fetch-logged-user").get(requiredLoggedIn, auth.fetchLoggedUser)
+authRoute.get("/allusers", requiredLoggedIn, auth.fetchUsers);
+authRoute.get("/user/:id", requiredLoggedIn, auth.fetchSingleUser);
+authRoute.put("/edituser/:id", requiredLoggedIn, auth.EditUser);
 authRoute.route("/username").get(requiredLoggedIn, auth.profile)
 authRoute.route("/reset-password").post(requiredLoggedIn, auth.resetPassword)
 authRoute.route("/changepassword").post(auth.changepassword)

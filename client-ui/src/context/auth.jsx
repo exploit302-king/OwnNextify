@@ -1,22 +1,28 @@
 import { useState, useEffect, useContext, createContext } from "react";
-
 import axios from "axios";
-import apis from '../config/apis'
+import apis from "../config/apis";
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
+
   const [auth, setAuth] = useState({
     user: "",
     token: "",
     refreshToken: "",
   });
 
+  // 👇 Isay auth ke baad hi rakho
+  const [loadingAuth, setLoadingAuth] = useState(true);
+
   useEffect(() => {
     const userAuth = localStorage.getItem("auth");
+
     if (userAuth) {
       setAuth(JSON.parse(userAuth));
     }
+
+    setLoadingAuth(false);
   }, []);
 
   axios.defaults.baseURL = apis[0];
@@ -24,13 +30,12 @@ const AuthProvider = ({ children }) => {
   axios.defaults.headers.common["refresh_token"] = auth?.refreshToken;
 
   return (
-    <AuthContext.Provider value={[auth, setAuth]}>
+    <AuthContext.Provider value={[auth, setAuth, loadingAuth]}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-
 export const useAuth = () => useContext(AuthContext);
 
-export default AuthProvider; 
+export default AuthProvider;

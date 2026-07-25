@@ -95,39 +95,39 @@ const AddProducts = () => {
   };
 
   return (
-    <div className="w-full px-4 md:px-6 lg:px-8 py-6 bg-gray-100">
-      <h1 className="text-3xl font-bold text-gray-800 mt-6">Add a New Product</h1>
+    <div className="w-full px-4 md:px-6 lg:px-8 py-6 dark:bg-gray-700">
+      <h1 className="text-3xl font-bold dark:text-white mt-6">Add a New Product</h1>
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-xl shadow-lg p-6 md:p-8 w-full max-w-5xl mx-auto"
+        className="dark:bg-gray-800 dark:text-white rounded-xl shadow-lg p-6 md:p-8 w-full max-w-5xl mx-auto"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
+          <label className="block text-sm font-bold mb-2" htmlFor="title">
             Title
           </label>
-          <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="title" name="title" type="text" placeholder="Product Title" value={formData.title} onChange={handleChange} required />
+          <input className="text-black shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="title" name="title" type="text" placeholder="Product Title" value={formData.title} onChange={handleChange} required />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="subtitle">
+          <label className="block text-sm font-bold mb-2" htmlFor="subtitle">
             Subtitle
           </label>
-          <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="subtitle" name="subtitle" type="text" placeholder="Product Subtitle" value={formData.subtitle} onChange={handleChange} required />
+          <input className="text-black shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="subtitle" name="subtitle" type="text" placeholder="Product Subtitle" value={formData.subtitle} onChange={handleChange} required />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="brand">
+          <label className="block text-sm font-bold mb-2" htmlFor="brand">
             Brand
           </label>
-          <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="brand" name="brand" type="text" placeholder="Brand Name" value={formData.brand} onChange={handleChange} required />
+          <input className="text-black shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="brand" name="brand" type="text" placeholder="Brand Name" value={formData.brand} onChange={handleChange} required />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="category">
+          <label className="block text-sm font-bold mb-2" htmlFor="category">
             Category
           </label>
           <select
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="text-gray-600 shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
             id="category"
             name="category"
             value={formData.category}
@@ -146,21 +146,21 @@ const AddProducts = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
+          <label className="block text-sm font-bold mb-2" htmlFor="description">
             Description
           </label>
-          <textarea className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="description" name="description" placeholder="Product Description" value={formData.description} onChange={handleChange} rows="3" required />
+          <textarea className="text-black shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="description" name="description" placeholder="Product Description" value={formData.description} onChange={handleChange} rows="3" required />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="price">
+          <label className="block text-sm font-bold mb-2" htmlFor="price">
             Price
           </label>
-          <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="price" name="price" type="number" placeholder="Price" value={formData.price} onChange={handleChange} required />
+          <input className="text-black shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="price" name="price" type="number" placeholder="Price" value={formData.price} onChange={handleChange} required />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <label className="block text-gray-700 dark:text-white text-sm font-bold mb-2">
+          <label className="block dark:text-white text-sm font-bold mb-2">
             Product Image
           </label>
           <input type="file" accept="image/*" onChange={handleImageChange} className="w-full border rounded p-2 dark:bg-gray-800 dark:text-white" />
@@ -178,14 +178,14 @@ const AddProducts = () => {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="stock">
+          <label className="block text-sm font-bold mb-2" htmlFor="stock">
             Stock
           </label>
-          <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="stock" name="stock" type="number" placeholder="Stock Quantity" value={formData.stock} onChange={handleChange} required />
+          <input className="text-black shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="stock" name="stock" type="number" placeholder="Stock Quantity" value={formData.stock} onChange={handleChange} required />
         </div>
 
         <div className="mt-8 flex justify-end">
-          <button href="/" className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold transition" type="submit" >
+          <button href="/" className="bg-gray-600 hover:bg-gray-700 text-white px-8 py-3 rounded-lg font-semibold transition" type="submit" >
             {loader ? "Adding..." : "Add Product"}
           </button>
         </div>

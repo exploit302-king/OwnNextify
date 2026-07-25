@@ -496,6 +496,69 @@ export const deleteProfileImage = async () => {
   }
 }
 
+// Get All Users
+export const fetchUsers = async (req, res) => {
+  try {
+    const users = await schemaUser
+      .find({})
+      .select("-password");
+    res.json({
+      ok: true,
+      users,
+    });
+  } catch (error) {
+    res.json({
+      ok: false,
+      message: error.message,
+    });
+  }
+};
 
 
+// Get Single User
+export const fetchSingleUser = async (req, res) => {
+  try {
+    const user = await schemaUser
+      .findById(req.params.id)
+      .select("-password");
+
+    if (!user) {
+      return res.json({
+        ok: false,
+        message: "User not found",
+      });
+    }
+
+    res.json({
+      ok: true,
+      user,
+    });
+
+  } catch (error) {
+    res.json({
+      ok: false,
+      message: error.message,
+    });
+  }
+};
+
+export const EditUser = async (req, res) => {
+  try {
+    const updatedUser = await schemaUser.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    ).select("-password");
+
+    res.json({
+      ok: true,
+      user: updatedUser,
+    });
+  } catch (error) {
+    res.json({
+      ok: false,
+      message: error.message,
+    });
+  }
+};
 // Protected Routes en
