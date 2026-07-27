@@ -77,39 +77,43 @@ const ProductDetails = ({ product }) => {
           <p className="my-2 border-t">
             <span className="font-semibold text-[18px]">
               {category === "Electronics" ||
-              category === "Laptops" ||
-              category === "Mobiles" ||
-              category === "Gaming Console" ||
-              category === "Accessories"
+                category === "Laptops" ||
+                category === "Mobiles" ||
+                category === "Gaming Console" ||
+                category === "Accessories"
                 ? <span className="dark:text-red-500 text-red-800">Specifications:</span>
-                : <span className='dark:text-red-500 text-red-800'>Small Details:</span>}
+                : <span className='dark:text-red-500 text-red-800'>Small Details: </span>}
             </span>
-            <span className="text-blue-400">{category}</span>
+            <span className="text-blue-400"> {category}</span>
           </p>
 
-          <div className="border-t"></div>
-          <p className="font-bold my-2">
-            {InStock ? (
-              <>
-                <span className="text-orange-300 font-bold">In Stock:</span>
-                {stock === 1 ? (
-                  <span className="text-red-300 dark:text-red-300">only {stock} Item left</span>
-                ) : stock > 1 && stock <= 10 ? (
-                  <span className="text-purple-800 dark:text-purple-300">only {stock} Items left</span>
-                ) : stock >= 11 ? (
-                  <span className="text-red-800 dark:text-blue-800">{stock} Items left</span>
-                ) : ""}
-              </>
-            ) : (
-              <span className="text-red-600 font-bold">Out of Stock</span>
-            )}
-          </p>
+          <div className="border-t">
+            <p className="font-bold my-2">
+              {stock > 0 ? (
+                <>
+                  <span className="text-orange-400">In Stock: </span>
 
-          <p className="my-2 dark:text-orange-500 text-red-800">
-            <span className="font-semibold text-[18px] dark:text-red-500 text-red-800">Category:</span>
-            {category}
-          </p>
-
+                  {stock === 1 ? (
+                    <span className="text-red-500">
+                      Only {stock} Item Left
+                    </span>
+                  ) : stock <= 10 ? (
+                    <span className="text-purple-500">
+                      Only {stock} Items Left
+                    </span>
+                  ) : (
+                    <span className="text-green-600">
+                      {stock} Items Available
+                    </span>
+                  )}
+                </>
+              ) : (
+                <span className="text-red-600">
+                  Out of Stock
+                </span>
+              )}
+            </p>
+          </div>
           <div className="my-4">
             <h2 className="text-xl font-bold text-red-400">
               <b className="text-orange-400">Description:</b> &nbsp; {description}

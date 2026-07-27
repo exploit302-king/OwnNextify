@@ -36,6 +36,7 @@ import Wish from './components/WishItems.jsx';
 import Sidebar from './screens/Dashboard/Sidebar.jsx';
 import UploadImage from './screens/Dashboard/UploadImage.jsx';
 import Contact from './components/Contact.jsx';
+// import Checkout from "./screens/Checkout.jsx";
 import Search from './components/Search.jsx';
 
 const App = () => {
@@ -61,7 +62,7 @@ const App = () => {
             <Route path='CartPage' element={<CartPage />} />
             <Route path='Conformation' element={<PaymentConfirmation />} />
             <Route path='WishCard' element={<Wish />} />
-
+            {/* <Route path="Checkout" element={<Checkout />} /> */}
             <Route path='summary' element={<OrderSummary />} />
 
             <Route element={<PrivateRoute />}>

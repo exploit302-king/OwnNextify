@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from "dotenv";
+
 dotenv.config();
 // console.log(process.env.AWS_ACCESS_KEY_ID);
 // console.log(process.env.AWS_SECRET_ACCESS_KEY);
@@ -59,6 +60,9 @@ app.use("/api/v1/products", rProducts);
 
 import authRoute from './routes/rusers.js';
 app.use("/api/v1/users", authRoute);
+
+import orderRoute from "./routes/rorders.js";
+app.use("/api/v1/orders", orderRoute);
 
 // Start server
 app.listen(port, () => {
