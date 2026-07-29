@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 import apis from "../../config/apis";
 import { useAuth } from "../../context/auth";
+import { Link } from "react-router-dom";
 
 const Orders = () => {
     const [auth] = useAuth();
@@ -11,6 +13,7 @@ const Orders = () => {
     const [search, setSearch] = useState("");
     const [paymentFilter, setPaymentFilter] = useState("");
     const [statusFilter, setStatusFilter] = useState("");
+    const [deleteOrderId, setDeleteOrderId] = useState(null);
 
     const filteredOrders = orders.filter((order) => {
         const tabMatch =
@@ -31,6 +34,30 @@ const Orders = () => {
 
         return tabMatch && searchMatch && paymentMatch && statusMatch;
     });
+
+    const handleDeleteOrder = async () => {
+        try {
+            const { data } = await axios.delete(
+                `${apis[2]}/delete-order/${deleteOrderId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${auth.token}`,
+                    },
+                }
+            );
+            if (data.ok) {
+                toast.success("Order Deleted Successfully");
+                fetchOrders();
+                setDeleteOrderId(null);
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error("Failed to delete order");
+        }
+    };
+
     const tabs = [
         "All",
         "Pending",
@@ -61,6 +88,7 @@ const Orders = () => {
             setLoading(false);
         }
     };
+
     useEffect(() => {
         if (auth?.token) {
             fetchOrders();
@@ -229,9 +257,41 @@ const Orders = () => {
                                     </td>
 
                                     <td className="px-6 py-4">
-                                        <button className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white">
-                                            View
-                                        </button>
+
+                                        <div className="flex items-center gap-2">
+
+                                            <Link
+                                                to={`/dashboard/view-order/${order._id}`}
+                                                className="px-3 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white text-sm"
+                                            >
+                                                View
+                                            </Link>
+
+                                            <Link
+                                                to={`/dashboard/edit-order/${order._id}`}
+                                                className="px-3 py-2 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-white text-sm"
+                                            >
+                                                Edit
+                                            </Link>
+
+                                            <button
+                                                onClick={() => setDeleteOrderId(order._id)}
+                                                disabled={
+                                                    order.orderStatus === "Delivered" ||
+                                                    order.paymentStatus === "Paid"
+                                                }
+                                                className={`px-3 py-2 rounded-lg text-white text-sm
+        ${order.orderStatus === "Delivered" ||
+                                                        order.paymentStatus === "Paid"
+                                                        ? "bg-gray-400 cursor-not-allowed"
+                                                        : "bg-red-600 hover:bg-red-700"
+                                                    }`}
+                                            >
+                                                Delete
+                                            </button>
+
+                                        </div>
+
                                     </td>
                                 </tr>
                             ))
@@ -239,6 +299,61 @@ const Orders = () => {
                     </tbody>
                 </table>
             </div>
+            {
+                deleteOrderId && (
+
+                    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+
+                        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-[420px] p-6">
+
+                            <div className="flex justify-center">
+
+                                <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
+
+                                    <span className="text-3xl">🗑️</span>
+
+                                </div>
+
+                            </div>
+
+                            <h2 className="text-2xl font-bold text-center mt-5 dark:text-white">
+
+                                Delete Order?
+
+                            </h2>
+
+                            <p className="text-center text-gray-500 mt-3">
+
+                                This action cannot be undone.
+                                <br />
+                                Stock will be restored automatically.
+
+                            </p>
+
+                            <div className="flex justify-center gap-4 mt-8">
+
+                                <button
+                                    onClick={() => setDeleteOrderId(null)}
+                                    className="px-6 py-2 rounded-lg bg-gray-500 hover:bg-gray-600 text-white"
+                                >
+                                    Cancel
+                                </button>
+
+                                <button
+                                    onClick={handleDeleteOrder}
+                                    className="px-6 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white"
+                                >
+                                    Delete
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                )
+            }
         </div>
     );
 };

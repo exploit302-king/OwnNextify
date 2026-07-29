@@ -323,7 +323,7 @@ const AllProducts = () => {
                                     </td>
 
                                     <td className="px-5 py-4 font-bold text-gray-600">
-                                        Rs. {product.price}
+                                        Rs. {product.price.toLocaleString()}
                                     </td>
 
                                     <td className="px-5 py-4">
@@ -334,13 +334,13 @@ const AllProducts = () => {
 
                                         {product.stock > 0 ? (
 
-                                            <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
+                                            <span className="inline-flex items-center justify-center whitespace-nowrap bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
                                                 In Stock
                                             </span>
 
                                         ) : (
 
-                                            <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm">
+                                            <span className="inline-flex items-center justify-center whitespace-nowrap bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm">
                                                 Out Of Stock
                                             </span>
 

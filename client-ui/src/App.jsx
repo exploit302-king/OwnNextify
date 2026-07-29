@@ -39,6 +39,8 @@ import Wish from './components/WishItems.jsx';
 import Sidebar from './screens/Dashboard/Sidebar.jsx';
 import UploadImage from './screens/Dashboard/UploadImage.jsx';
 import Order from './screens/Dashboard/Order.jsx';
+import ViewOrder from "./screens/Dashboard/ViewOrder";
+import EditOrder from "./screens/Dashboard/EditOrder";
 import Contact from './components/Contact.jsx';
 // import Checkout from "./screens/Checkout.jsx";
 import Search from './components/Search.jsx';
@@ -88,7 +90,8 @@ const App = () => {
                 <Route path="edituser/:id" element={<EditUser />} />
                 <Route path="viewuser/:id" element={<ViewUser />} />
                 <Route path="Order" element={<Order />} />
-
+                <Route path="view-order/:id" element={<ViewOrder />} />
+                <Route path="edit-order/:id" element={<EditOrder />} />
 
               </Route>
               {/* dashboard items end */}
