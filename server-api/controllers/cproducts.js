@@ -50,6 +50,29 @@ export const fetchProduct = async (req, res) => {
   }
 }
 
+// Seller Products
+export const fetchSellerProducts = async (req, res) => {
+  try {
+
+    const products = await schemaProduct.find({
+      seller: req.user.id,
+    });
+
+    res.json({
+      ok: true,
+      products,
+    });
+
+  } catch (error) {
+
+    res.json({
+      ok: false,
+      message: error.message,
+    });
+
+  }
+};
+
 // Create a new Product
 export const addNewProduct = async (req, res) => {
   try {
@@ -90,6 +113,7 @@ export const addNewProduct = async (req, res) => {
       title,
       subtitle,
       brand,
+      seller: req.user.id,
       category,
       description,
       price,

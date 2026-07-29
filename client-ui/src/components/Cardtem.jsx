@@ -13,31 +13,35 @@ const ProductCard = ({ product }) => {
   const { cartItems } = useSelector((state) => state.cartSlice);
 
   useEffect(() => {
-    const item = cartItems.find((cartItem) => cartItem.id === product?._id);
-    if (item && item.qty === product?.stock) {
+    const item = cartItems.find((cartItem) => cartItem.id === product.id);
+
+    if (item && item.qty >= product.stock) {
       setCartPlusDisabled(true);
+    } else {
+      setCartPlusDisabled(false);
     }
   }, [product, cartItems]);
 
   const addItem = (id) => {
-    if (cartItems.some((cartItem) => cartItem.id === id)) {
-      console.log('yes its alreaded')
-      const item = cartItems.find((cartItem) => cartItem.id === id);
+    const item = cartItems.find((cartItem) => cartItem.id === id);
+    if (item) {
+      if (item.qty >= product.stock) {
+        errorToast(`Only ${product.stock} item(s) available in stock.`);
+        return;
+      }
       dispatch(addCartItem(id, item.qty + 1));
     } else {
       dispatch(addCartItem(id, 1));
-      console.log('not its not')
     }
   };
 
   const decreaseItem = (id) => {
     const item = cartItems.find((cartItem) => cartItem.id === id);
-
-    if (item && item.qty > 1) {
-      dispatch(addCartItem(id, item.qty - 1));  // Quantity decrease
-      console.log('Item quantity decreased');
+    if (!item) return;
+    if (item.qty > 1) {
+      dispatch(addCartItem(id, item.qty - 1));
     } else {
-      console.log('Item quantity is already 1, cannot decrease');
+      errorToast("Minimum quantity is 1.");
     }
   };
 
@@ -202,9 +206,23 @@ const Cart = () => {
                   </dl>
                 </div>
                 <Link
-                  to="/Checkout"
-                  className="flex w-full items-center justify-center rounded-lg  px-5 py-2.5 text-sm font-medium text-whitefocus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700" >
-                  Proceed to Checkout
+                  to={cartItems.length > 0 ? "/Checkout" : "#"}
+                  state={cartItems.length > 0 ? { cartItems } : null}
+                  onClick={(e) => {
+                    if (cartItems.length === 0) {
+                      e.preventDefault();
+                      errorToast("Your cart is empty.");
+                    }
+                  }}
+                  className={`flex w-full items-center justify-center rounded-lg px-5 py-2.5 text-sm font-medium transition 
+                    ${cartItems.length > 0
+                      ? "bg-blue-600 text-white hover:bg-blue-700"
+                      : "bg-gray-400 text-gray-200 cursor-not-allowed pointer-events-auto"
+                    }`}
+                >
+                  {cartItems.length > 0
+                    ? "Proceed to Checkout"
+                    : "Cart is Empty"}
                 </Link>
                 <div className="flex items-center justify-center gap-2">
                   <span className="text-sm font-normal text-gray-500 dark:text-gray-400">

@@ -1,4 +1,5 @@
 import schemaOrder from "../models/order.js";
+import schemaProduct from "../models/mproducts.js";
 
 // Create Order
 export const createOrder = async (req, res) => {
@@ -22,12 +23,77 @@ export const createOrder = async (req, res) => {
     }
 };
 
+// Get My Orders
+export const fetchMyOrders = async (req, res) => {
+    try {
+
+        console.log("req.user:", req.user);
+
+        const orders = await schemaOrder.find({
+            customer: req.user.id,
+        });
+
+        console.log("Orders:", orders);
+
+        res.json({
+            ok: true,
+            orders,
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.json({
+            ok: false,
+            message: error.message,
+        });
+
+    }
+};
+
 // Get All Orders
-export const fetchOrders = async (req, res) => {
+export const fetchAllOrders = async (req, res) => {
     try {
 
         const orders = await schemaOrder
             .find({})
+            .populate("customer", "name email profileImage")
+            .populate("products.product");
+
+        console.log("Total Orders:", orders.length);
+
+        res.json({
+            ok: true,
+            orders,
+        });
+
+    } catch (error) {
+
+        res.json({
+            ok: false,
+            message: error.message,
+        });
+
+    }
+};
+
+// Get Seller Orders
+export const fetchSellerOrders = async (req, res) => {
+    try {
+
+        // Seller ke products
+        const products = await schemaProduct.find({
+            seller: req.user.id,
+        });
+
+        const productIds = products.map((product) => product._id);
+
+        // Sirf un orders ko lao jin me seller ke products hain
+        const orders = await schemaOrder
+            .find({
+                "products.product": { $in: productIds },
+            })
             .populate("customer", "name email profileImage")
             .populate("products.product");
 
@@ -45,6 +111,7 @@ export const fetchOrders = async (req, res) => {
 
     }
 };
+
 // Get Single Order
 export const fetchSingleOrder = async (req, res) => {
     try {

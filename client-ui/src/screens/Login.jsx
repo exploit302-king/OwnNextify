@@ -33,7 +33,7 @@ const LoginForm = () => {
         setAuth(data); // Set auth context with the token from backend
         localStorage.setItem("auth", JSON.stringify( data))
         successToast("You are successfully loggedIn "); // Display success message
-        navigate("/dashboard")
+        navigate("/")
       }
     } catch (error) {
       console.error(`Login error:`, error);

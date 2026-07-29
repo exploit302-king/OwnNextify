@@ -12,9 +12,9 @@ const AuthProvider = ({ children }) => {
     refreshToken: "",
   });
 
-  // 👇 Isay auth ke baad hi rakho
   const [loadingAuth, setLoadingAuth] = useState(true);
 
+  // Load auth from localStorage
   useEffect(() => {
     const userAuth = localStorage.getItem("auth");
 
@@ -26,8 +26,46 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   axios.defaults.baseURL = apis[0];
-  axios.defaults.headers.common["Authorization"] = auth?.token;
-  axios.defaults.headers.common["refresh_token"] = auth?.refreshToken;
+
+  axios.defaults.headers.common["Authorization"] =
+    auth?.token ? `Bearer ${auth.token}` : "";
+
+  axios.defaults.headers.common["refresh_token"] =
+    auth?.refreshToken || "";
+
+  // Verify logged in user
+  useEffect(() => {
+
+    const verifyUser = async () => {
+
+      if (!auth?.token) return;
+
+      try {
+
+        const { data } = await axios.get("/fetch-logged-user");
+
+        if (data?.user) {
+          setAuth(data);
+          localStorage.setItem("auth", JSON.stringify(data));
+        }
+
+      } catch (error) {
+
+        console.log("Session Expired");
+
+        setAuth({
+          user: "",
+          token: "",
+          refreshToken: "",
+        });
+
+        localStorage.removeItem("auth");
+      }
+    };
+
+    verifyUser();
+
+  }, [auth?.token]);
 
   return (
     <AuthContext.Provider value={[auth, setAuth, loadingAuth]}>

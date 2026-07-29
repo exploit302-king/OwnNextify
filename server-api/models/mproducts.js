@@ -17,6 +17,11 @@ const productSchema = new Schema({
     type: String,
     required: true,
   },
+  seller: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user",
+    required: true,
+  },
   category: {
     type: String,
     required: true
@@ -64,7 +69,7 @@ const productSchema = new Schema({
     type: Number,
     default: 0,
   },
-  resetPasswordCode : { }
+  resetPasswordCode: {}
 
 }, { timestamps: true });
 

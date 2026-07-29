@@ -76,10 +76,10 @@ const Sidebar = () => {
                 title: "Orders",
                 icon: <GiShoppingCart />,
                 links: [
-                  "cart Page",
-                  "updateprofile",
-                  "Upload-Image",
-                  "change-password",
+                  "Order",
+                  // "updateprofile",
+                  // "Upload-Image",
+                  // "change-password",
                 ],
               },
               {

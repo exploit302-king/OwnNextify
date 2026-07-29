@@ -348,27 +348,55 @@ const Navbar = () => {
               {/* User Menu */}
               <Menu as="div" className="relative">
                 <Menu.Button className="flex items-center focus:outline-none">
-                  <img className="h-12 w-12 rounded-full border-2 border-gray-400 object-cover" src={auth?.user?.profileImage || user} alt="User" />
+                  <img
+                    className="h-12 w-12 rounded-full border-2 border-gray-400 object-cover"
+                    src={auth?.user?.profileImage || user}
+                    alt="User"
+                  />
                 </Menu.Button>
+
                 {auth?.user ? (
                   <Menu.Items className="absolute right-0 w-72 bg-gray-200 shadow-lg rounded-lg mt-2 z-10">
                     <div className="flex items-center">
-                      <img className="h-10 w-10 my-2 pb-0 ml-1 rounded-full border-2 border-gray-400 object-cover" src={auth?.user?.profileImage || user} alt="User" />
+                      <img
+                        className="h-10 w-10 my-2 pb-0 ml-1 rounded-full border-2 border-gray-400 object-cover"
+                        src={auth?.user?.profileImage || user}
+                        alt="User"
+                      />
+
                       <div className="ml-2">
-                        <span className="text-sm font-medium text-black">{auth?.user?.name}</span>
-                        <span className="text-md text-black block">{auth?.user?.email}</span>
+                        <span className="text-sm font-medium text-black">
+                          {auth?.user?.name}
+                        </span>
+
+                        <span className="text-md text-black block">
+                          {auth?.user?.email}
+                        </span>
                       </div>
                     </div>
+
                     <div className="border-t border-white"></div>
-                    <Menu.Item>
-                      {({ active }) => (
-                        <Link to="/dashboard" className={`block px-4 py-3 text-sm font-medium text-black ${active ? "bg-gray-300" : ""}`}>
-                          Dashboard
-                        </Link>
+
+                    {(auth?.user?.role?.includes("admin") ||
+                      auth?.user?.role?.includes("seller")) && (
+                        <Menu.Item>
+                          {({ active }) => (
+                            <Link
+                              to="/dashboard"
+                              className={`block px-4 py-3 text-sm font-medium text-black ${active ? "bg-gray-300" : ""
+                                }`}
+                            >
+                              Dashboard
+                            </Link>
+                          )}
+                        </Menu.Item>
                       )}
-                    </Menu.Item>
+
                     <div className="p-4 flex items-center justify-center">
-                      <Button onClick={Logout} className="bg-blue-600 text-white text-sm font-semibold px-24 py-2 rounded-md hover:bg-blue-700 transition duration-150">
+                      <Button
+                        onClick={Logout}
+                        className="bg-blue-600 text-white text-sm font-semibold px-24 py-2 rounded-md hover:bg-blue-700 transition duration-150"
+                      >
                         Logout
                       </Button>
                     </div>
@@ -379,7 +407,8 @@ const Navbar = () => {
                       {({ active }) => (
                         <Link
                           to="/login"
-                          className={`block px-4 py-3 text-sm font-medium text-black ${active ? "bg-gray-300" : ""}`}
+                          className={`block px-4 py-3 text-sm font-medium text-black ${active ? "bg-gray-300" : ""
+                            }`}
                         >
                           Login
                         </Link>
@@ -390,13 +419,13 @@ const Navbar = () => {
                       {({ active }) => (
                         <Link
                           to="/signup"
-                          className={`block px-4 py-3 text-sm font-medium text-black ${active ? "bg-gray-300" : ""}`}
+                          className={`block px-4 py-3 text-sm font-medium text-black ${active ? "bg-gray-300" : ""
+                            }`}
                         >
                           Signup
                         </Link>
                       )}
                     </Menu.Item>
-
                   </Menu.Items>
                 )}
               </Menu>

@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { successToast, errorToast } from "../../functions/messages";
 import apis from "../../config/apis";
+import { useAuth } from "../../context/auth";
 import { Link } from "react-router-dom";
 
 const AllProducts = () => {
+    const [auth] = useAuth();
     const [products, setProducts] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [search, setSearch] = useState("");
@@ -19,7 +21,15 @@ const AllProducts = () => {
         try {
             setLoading(true);
 
-            const { data } = await axios.get(apis[1]);
+            const url = auth?.user?.role?.includes("admin")
+                ? apis[1]
+                : `${apis[1]}/my-products`;
+
+            const { data } = await axios.get(url, {
+                headers: {
+                    Authorization: `Bearer ${auth.token}`,
+                },
+            });
 
             if (data.ok) {
                 setProducts(data.products);
@@ -92,10 +102,12 @@ const AllProducts = () => {
     };
 
     useEffect(() => {
-        fetchProducts();
-    }, []);
+        if (auth?.token) {
+            fetchProducts();
+        }
+    }, [auth]);
 
-    
+
     useEffect(() => {
         if (search.trim() === "") {
             setFilteredProducts(products);

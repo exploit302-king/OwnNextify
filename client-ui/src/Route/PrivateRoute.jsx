@@ -9,7 +9,7 @@ const PrivateRoute = () => {
   const [loading, setLoading] = useState(true);
   const [ok, setOk] = useState(false);
 
-  const [auth, , loadingAuth] = useAuth();
+  const [auth, setAuth, loadingAuth] = useAuth();
 
   useEffect(() => {
     if (auth?.token) {
@@ -30,13 +30,26 @@ const PrivateRoute = () => {
 
       console.log("Response:", res.data);
 
-      if (res.data?.user || res.data?.token) {
+      if (
+        res.data?.user &&
+        (res.data.user.role.includes("admin") ||
+          res.data.user.role.includes("seller"))
+      ) {
         setOk(true);
       } else {
         setOk(false);
       }
     } catch (error) {
       console.log("Error:", error.response?.data || error.message);
+
+      localStorage.removeItem("auth");
+
+      setAuth({
+        user: "",
+        token: "",
+        refreshToken: "",
+      });
+
       setOk(false);
     } finally {
       setLoading(false);

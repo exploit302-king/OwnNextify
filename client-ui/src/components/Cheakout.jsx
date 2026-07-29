@@ -1,8 +1,19 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState("");
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const cartItems = location.state?.cartItems || [];
+
+  const [buyerInfo, setBuyerInfo] = useState({
+    name: "",
+    email: "",
+    address: "",
+    phone: "",
+  });
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -30,6 +41,8 @@ const Checkout = () => {
                         </label>
                         <input
                           type="text"
+                          value={buyerInfo.name}
+                          onChange={(e) => setBuyerInfo({ ...buyerInfo, name: e.target.value })}
                           id="name"
                           className="mt-1 w-full rounded-lg border border-gray-300 p-2.5 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                           required
@@ -45,6 +58,8 @@ const Checkout = () => {
                         <input
                           type="email"
                           id="email"
+                          value={buyerInfo.email}
+                          onChange={(e) => setBuyerInfo({ ...buyerInfo, email: e.target.value })}
                           className="mt-1 w-full rounded-lg border border-gray-300 p-2.5 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                           required
                         />
@@ -59,6 +74,8 @@ const Checkout = () => {
                         <input
                           type="text"
                           id="address"
+                          value={buyerInfo.address}
+                          onChange={(e) => setBuyerInfo({ ...buyerInfo, address: e.target.value })}
                           className="mt-1 w-full rounded-lg border border-gray-300 p-2.5 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                           required
                         />
@@ -73,6 +90,8 @@ const Checkout = () => {
                         <input
                           type="tel"
                           id="phone"
+                          value={buyerInfo.phone}
+                          onChange={(e) => setBuyerInfo({ ...buyerInfo, phone: e.target.value })}
                           className="mt-1 w-full rounded-lg border border-gray-300 p-2.5 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                           required
                         />
@@ -191,16 +210,15 @@ const Checkout = () => {
 
           {/* Proceed to Payment Button */}
           <div className="mt-8 text-center">
-            <Link to="/Conformation"
+            <button disabled={!paymentMethod} onClick={() => navigate("/Confirmation", { state: { cartItems, buyerInfo, paymentMethod } }) }
               disabled={!paymentMethod}
-              className={`w-full rounded-lg px-5 py-2.5 text-sm font-medium focus:outline-none focus:ring-4 ${
-                paymentMethod
-                  ? "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-300"
-                  : "bg-gray-400 text-gray-200 cursor-not-allowed"
-              }`}
+              className={`w-full rounded-lg px-5 py-2.5 text-sm font-medium focus:outline-none focus:ring-4 ${paymentMethod
+                ? "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-300"
+                : "bg-gray-400 text-gray-200 cursor-not-allowed"
+                }`}
             >
               {paymentMethod ? "Proceed to Payment" : "Select a Payment Method"}
-            </Link>
+            </button>
           </div>
 
           <div className="mt-4 text-center">

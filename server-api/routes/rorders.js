@@ -1,12 +1,14 @@
 import express from "express";
-import { requiredLoggedIn } from "../middlewares/authMiddleware.js";
+import { requiredLoggedIn, requiredSellerOrAdmin, isAdmin, } from "../middlewares/authMiddleware.js";
 
 import {
-  createOrder,
-  fetchOrders,
-  fetchSingleOrder,
-  updateOrder,
-  deleteOrder,
+    createOrder,
+    fetchMyOrders,
+    fetchSellerOrders,
+    fetchAllOrders,
+    fetchSingleOrder,
+    updateOrder,
+    deleteOrder,
 } from "../controllers/corders.js";
 
 const orderRoute = express.Router();
@@ -14,8 +16,14 @@ const orderRoute = express.Router();
 // Create Order
 orderRoute.post("/create-order", requiredLoggedIn, createOrder);
 
-// Get All Orders
-orderRoute.get("/allorders", requiredLoggedIn, fetchOrders);
+// Buyer Orders
+orderRoute.get("/my-orders", requiredLoggedIn, fetchMyOrders);
+
+// Seller Orders
+orderRoute.get("/seller-orders", requiredLoggedIn, requiredSellerOrAdmin, fetchSellerOrders);
+
+// Admin Orders
+orderRoute.get("/allorders", requiredLoggedIn, isAdmin, fetchAllOrders);
 
 // Get Single Order
 orderRoute.get("/order/:id", requiredLoggedIn, fetchSingleOrder);

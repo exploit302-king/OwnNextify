@@ -31,10 +31,14 @@ import CartPage from './components/Cardtem.jsx';
 import NotFoundPage from './screens/P404.jsx';
 import PrivateRoute from './Route/PrivateRoute.jsx';
 import OrderSummary from './components/OrderSummary.jsx';
+import OrderSuccess from './components/OrderSuccess.jsx';
+import MyOrders from './components/MyOrders.jsx';
+
 import PaymentConfirmation from './components/PaymentConformation.jsx';
 import Wish from './components/WishItems.jsx';
 import Sidebar from './screens/Dashboard/Sidebar.jsx';
 import UploadImage from './screens/Dashboard/UploadImage.jsx';
+import Order from './screens/Dashboard/Order.jsx';
 import Contact from './components/Contact.jsx';
 // import Checkout from "./screens/Checkout.jsx";
 import Search from './components/Search.jsx';
@@ -60,8 +64,10 @@ const App = () => {
             {/* <Route path="/*" element={<NotFoundPage />} /> */}
             <Route path='Checkout' element={<Checkout />} />
             <Route path='CartPage' element={<CartPage />} />
-            <Route path='Conformation' element={<PaymentConfirmation />} />
+            <Route path='Confirmation' element={<PaymentConfirmation />} />
             <Route path='WishCard' element={<Wish />} />
+            <Route path='/OrderSuccess' element={<OrderSuccess />} />
+            <Route path="/MyOrders" element={<MyOrders />} />
             {/* <Route path="Checkout" element={<Checkout />} /> */}
             <Route path='summary' element={<OrderSummary />} />
 
@@ -81,6 +87,7 @@ const App = () => {
                 <Route path='allusers' element={<AllUsers />} />
                 <Route path="edituser/:id" element={<EditUser />} />
                 <Route path="viewuser/:id" element={<ViewUser />} />
+                <Route path="Order" element={<Order />} />
 
 
               </Route>
